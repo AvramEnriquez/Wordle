@@ -3,11 +3,11 @@ from wordle import wordle
 
 """CONNECTING TO DATABASE"""
 # Insert database name, username, password, server address, and port here
-DB_NAME = ('')
-DB_USER = ('')
+DB_NAME = ('postgres')
+DB_USER = ('postgres')
 DB_PASS = ('')
-DB_HOST = ('')
-DB_PORT = ('')
+DB_HOST = ('localhost')
+DB_PORT = ('5432')
 
 table_name = 'wordle_stats'
 
@@ -46,7 +46,6 @@ conn.commit()  # Commit the change
 def play():
     tries, win = wordle()
 
-    cur = conn.cursor()
     cur.execute(f"""
         INSERT INTO wordle_stats (
             tries, 
@@ -60,10 +59,25 @@ def play():
     conn.commit()
 
 def stats():
-    played = cur.execute(f"""
-                SELECT COUNT (id)
-                FROM wordle_stats;
-                """)
+    cur.execute(f"""
+        SELECT COUNT (*)
+        FROM wordle_stats;
+        """)
+    played = cur.fetchone()
+    print(f'Played {played[0]} games.')
+
+    cur.execute(f"""
+        SELECT COUNT (
+            CASE 
+                WHEN True THEN 1
+                ELSE 0 
+            END)
+        FROM wordle_stats;
+        """)
+    wins = cur.fetchone()
+    win_percent = (wins[0] / played[0]) * 100
+    print(f'Win rate: {win_percent}%')
+
     conn.commit()
 
 def done():
