@@ -1,3 +1,4 @@
+import psycopg2
 import random
 from wordle_words import words
 words = list(map(str.upper, words))
@@ -87,3 +88,43 @@ def wordle():
 word, strikes = wordle()
 
 print(f'You\'ve correctly guessed the word {word}. It took {strikes} tries.')
+
+# Insert database name, username, password, server address, and port here
+DB_NAME = ('postgres')
+DB_USER = ('postgres')
+DB_PASS = ('')
+DB_HOST = ('localhost')
+DB_PORT = ('5432')
+
+try:
+    postdb = psycopg2.connect(
+        database=DB_NAME,
+        user=DB_USER,
+        password=DB_PASS,
+        host=DB_HOST,
+        port=DB_PORT)
+    print("Database connected successfully!")
+    valid_database = True
+except:
+    print("Database failed to connect.")
+
+def create_table():
+    table_name = input("Create Table name: ")
+
+    try:
+        # Create a cursor
+        cur = postdb.cursor()
+    
+        # Execute query to create table
+        cur.execute(f"""
+            CREATE TABLE {table_name} 
+            (id SERIAL PRIMARY KEY NOT NULL)
+            ;""")
+        print(f"{table_name} Table created successfully with serial ID column.")
+
+    except psycopg2.errors.DuplicateTable:
+        # State if table already exists
+        print(f"{table_name} Table already exists.")
+
+    postdb.commit()  # Commit the change
+    cur.close()  # Close cursor
