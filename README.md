@@ -8,4 +8,5 @@
  - All character positions were guessed correctly (green)
 
  May not work on Windows
- Words sourced from: https://github.com/tabatkins/wordle-list
+ 
+Words sourced from: https://github.com/tabatkins/wordle-list
