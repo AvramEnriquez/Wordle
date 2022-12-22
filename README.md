@@ -1,5 +1,5 @@
 # Wordle
- Guess the word in 6 tries
+ Guess the word in 6 tries.
  
  This code makes use of ANSI escape code via Unix terminal to color code both a guess and keyboard output. May not work on Windows.
 
