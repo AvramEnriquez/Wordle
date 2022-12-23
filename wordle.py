@@ -25,6 +25,7 @@ def wordle():
     tries = 0
     keyboard = "QWERTYUIOP\n ASDFGHJKL\n  ZXCVBNM"
     win = False
+    guesses = ''
 
     while win == False:
         # End program if tries reaches 6
@@ -72,14 +73,15 @@ def wordle():
                 # Replace all yellow characters with gray
                 full_word = full_word.replace(color.YELLOWTEXT + str(user_char) + color.END, str(user_char) + color.END)
 
+        guesses += full_word + '\n'
+
         # If word guess is all green (correct), set win as True
         if full_word.count(color.GREENTEXT) == len(word):
             win = True
 
-        print(full_word)
-        print('')
+        print(guesses)
         print(keyboard)
-        print('')
+        print('\n')
 
         tries += 1
         print('Tries: ' + str(tries))
