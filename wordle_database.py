@@ -1,4 +1,5 @@
 import psycopg2
+import plotext as plt
 from wordle import wordle
 
 """CONNECTING TO DATABASE"""
@@ -39,7 +40,6 @@ try:
 except psycopg2.errors.DuplicateTable:
     # State if table already exists
     print(f"{table_name} Table already exists.")
-
 conn.commit()  # Commit the change
 
 """Functions to play game or see stats"""
@@ -59,26 +59,63 @@ def play():
     conn.commit()
 
 def stats():
-    cur.execute(f"""
-        SELECT COUNT (*)
-        FROM wordle_stats;
+    # Pull number of games
+    cur.execute("""
+        SELECT 
+            COUNT (*)
+        FROM 
+            wordle_stats;
         """)
     played = cur.fetchone()
     print(f'Played {played[0]} games.')
 
-    cur.execute(f"""
-        SELECT COUNT (
-            CASE 
-                WHEN True THEN 1
-                ELSE 0 
-            END)
-        FROM wordle_stats;
+    # Calculate win %
+    cur.execute("""
+        SELECT 
+            COUNT (win)
+        FROM 
+            wordle_stats
+        WHERE
+            win = True;
         """)
     wins = cur.fetchone()
     win_percent = (wins[0] / played[0]) * 100
     print(f'Win rate: {win_percent}%')
 
-    conn.commit()
+    # Calculate guess distribution
+    cur.execute("""
+        SELECT
+            tries,
+            COUNT(*) AS num
+        FROM
+            wordle_stats
+        WHERE
+            win = True
+        GROUP BY
+            tries
+        ORDER BY
+            tries;
+        """)
+    guess = cur.fetchall()
+    dist = [(1,0), (2,0), (3,0), (4,0), (5,0), (6,0)]
+
+    # If guess list has a tuple pair wherein the first value matches 
+    # with another tuple pair in the dist list
+    # then substitute dist pair with guess pair
+    for guess_num, tries in guess:
+        set = (guess_num, tries)
+        out = [set if tries[0] == set[0] else tries for tries in dist]
+        dist = out
+
+    # Split dist tuple into two lists: 
+    # ([1, 3, 6, 8, 5, 2], [1, 2, 3, 4, 5, 6]) -> [1, 3, 6, 8, 5, 2] and [1, 2, 3, 4, 5, 6]
+    dist = list(zip(*dist))
+    guess_dist = dist[0]
+    distribution = dist[1]
+
+    # Plot it
+    plt.simple_bar(guess_dist, distribution, width = 100, title = 'Guess Distribution for Wins')
+    plt.show()
 
 def done():
     cur.close()
@@ -95,4 +132,5 @@ while command != 'done':
         "'stats' displays stats\n"
         "'done' ends the program\n"
         "Input: ")
+    print("")
     function_dict[command]()

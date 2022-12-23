@@ -30,7 +30,7 @@ def wordle():
         # End program if tries reaches 6
         if tries == 6:
             print(f'Sorry, you lost. The word was {word}')
-            exit()
+            return tries, win
 
         # While loop for Input
         while True:
