@@ -79,7 +79,7 @@ def wordle():
         if full_word.count(color.GREENTEXT) == len(word):
             win = True
 
-        print(guesses)
+        print('\n' + guesses)
         print(keyboard)
         print('\n')
 
