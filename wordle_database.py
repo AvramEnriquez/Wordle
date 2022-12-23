@@ -19,7 +19,7 @@ try:
         password=DB_PASS,
         host=DB_HOST,
         port=DB_PORT)
-    print("Database connected successfully!")
+    print("\nDatabase connected successfully!")
     valid_database = True
 except:
     print("Database failed to connect.")
@@ -36,10 +36,10 @@ try:
             "win" BOOLEAN
         );
         """)
-    print(f"{table_name} Table created successfully.")
+    print(f"Table {table_name} created successfully.")
 except psycopg2.errors.DuplicateTable:
     # State if table already exists
-    print(f"{table_name} Table already exists.")
+    print(f"Table {table_name} already exists.")
 conn.commit()  # Commit the change
 
 """Functions to play game or see stats"""
@@ -79,8 +79,11 @@ def stats():
             win = True;
         """)
     wins = cur.fetchone()
-    win_percent = (wins[0] / played[0]) * 100
-    print(f'Win rate: {win_percent}%')
+    try:
+        win_percent = (wins[0] / played[0]) * 100
+        print(f'Win rate: {win_percent}%')
+    except ZeroDivisionError:
+        print('No win percentage, no games played.')
 
     # Calculate guess distribution
     cur.execute("""
@@ -117,20 +120,34 @@ def stats():
     plt.simple_bar(guess_dist, distribution, width = 100, title = 'Guess Distribution for Wins')
     plt.show()
 
+def clear_stats():
+    confirm = input('Enter Y to confirm. Enter N to go back: ').upper()
+    if confirm == 'Y':
+        cur.execute("""
+            DELETE
+
+            FROM
+                wordle_stats;
+            """)
+        conn.commit()
+
 def done():
     cur.close()
     conn.close()
     print("Done!")
 
-function_dict = {'play':play, 'stats':stats, 'done':done}
+function_dict = {'play':play, 'stats':stats, 'clear_stats':clear_stats, 'done':done}
 command = ''
 
 while command != 'done':
-    print("")
-    command = input("What would you like to do?\n"
+    command = input("\nWhat would you like to do?\n"
         "'play' plays a round of Wordle\n"
         "'stats' displays stats\n"
+        "'clear_stats' clears stats\n"
         "'done' ends the program\n"
         "Input: ")
-    print("")
-    function_dict[command]()
+    print("\n")
+    try:
+        function_dict[command]()
+    except KeyError:
+        print('Invalid input')
