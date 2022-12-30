@@ -7,6 +7,11 @@
  - The number of characters in a guess > actual number of characters in wordle
  - All character positions were guessed correctly (green)
 
- May not work on Windows
- 
+ Another challenge I faced when writing this code was creating a guess distribution bar chart that plotted from a base of 0
+ AKA Plot all guess distribution even if value is 0.
+ Eventually I figured out how to use a subsitution for loop and a base list of tuples to gain the desired plotted bar chart.
+
+
+May not work on Windows
+
 Words sourced from: https://github.com/tabatkins/wordle-list
