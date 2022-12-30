@@ -19,8 +19,8 @@ def random_word(word_list):
 
 def wordle():
     """Actual Wordle game"""
-    word = random_word(words)
-    # word = "VEGAN" # <-- Test word
+    # word = random_word(words)
+    word = "VEGAN" # <-- Test word
     alphabet = set("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
     tries = 0
     keyboard = "QWERTYUIOP\n ASDFGHJKL\n  ZXCVBNM"
@@ -29,8 +29,10 @@ def wordle():
     streak = True
 
     while win == False:
+        full_word = ''
+
         # End program if tries reaches 6
-        if tries == 6:
+        if tries >= 6:
             print(f'Sorry, you lost. The word was {word}')
             # If streak is set to False, will clear streak column in database
             streak = False
@@ -50,7 +52,6 @@ def wordle():
                 break
 
         # For loop to adjust text color and keyboard highlights
-        full_word = ''
         for user_char, word_char in zip(user_word, word):  # list(zip('abc', 'xyz')) = [('a', 'x'), ('b', 'y'), ('c', 'z')]
             if user_char == word_char:
                 text = (color.BOLDTEXT + color.GREENTEXT + str(user_char) + color.END)
@@ -76,18 +77,18 @@ def wordle():
                 # Replace all yellow characters with gray
                 full_word = full_word.replace(color.YELLOWTEXT + str(user_char) + color.END, str(user_char) + color.END)
 
-        guesses += full_word + '\n'
-
         # If word guess is all green (correct), set win as True
         if full_word.count(color.GREENTEXT) == len(word):
             win = True
 
+        guesses += full_word + '\n'
+        tries += 1
+
         print('\n' + guesses)
         print(keyboard)
         print('\n')
-
-        tries += 1
         print('Tries: ' + str(tries))
     
     print(f'You\'ve correctly guessed the word {word}. It took {tries} tries.')
+    
     return tries, win, streak
