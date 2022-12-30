@@ -33,7 +33,8 @@ try:
         CREATE TABLE {table_name} (
             id SERIAL PRIMARY KEY NOT NULL,
             "tries" INT,
-            "win" BOOLEAN
+            "win" BOOLEAN,
+            "streak" BOOLEAN
         );
         """)
     print(f"Table {table_name} created successfully.")
@@ -44,18 +45,30 @@ conn.commit()  # Commit the change
 
 """Functions to play game or see stats"""
 def play():
-    tries, win = wordle()
+    tries, win, streak = wordle()
 
     cur.execute(f"""
         INSERT INTO wordle_stats (
             tries, 
-            win
+            win,
+            streak
         )
         VALUES (
             {tries}, 
-            {win}
+            {win},
+            {streak}
         );
         """)
+
+    # If streak is set to False, will clear streak column in database
+    if streak == False:
+        cur.execute(f"""
+            UPDATE 
+                wordle_stats
+            SET 
+                streak = False;
+            """)
+
     conn.commit()
 
 def stats():
@@ -80,10 +93,22 @@ def stats():
         """)
     wins = cur.fetchone()
     try:
-        win_percent = (wins[0] / played[0]) * 100
-        print(f'Win rate: {win_percent}%')
+        win_percent = (wins[0] / played[0])
+        print(f'Win rate: {win_percent:.0%}')
     except ZeroDivisionError:
         print('No win percentage, no games played.')
+
+    # Count win streak
+    cur.execute("""
+        SELECT 
+            COUNT (streak)
+        FROM 
+            wordle_stats
+        WHERE
+            streak = True;
+        """)
+    streak = cur.fetchone()
+    print(f'Streak: {streak[0]}')
 
     # Calculate guess distribution
     cur.execute("""

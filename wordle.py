@@ -20,18 +20,21 @@ def random_word(word_list):
 def wordle():
     """Actual Wordle game"""
     word = random_word(words)
-    # word = "VEGAN" <-- Test word
+    # word = "VEGAN" # <-- Test word
     alphabet = set("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
     tries = 0
     keyboard = "QWERTYUIOP\n ASDFGHJKL\n  ZXCVBNM"
     win = False
     guesses = ''
+    streak = True
 
     while win == False:
         # End program if tries reaches 6
         if tries == 6:
             print(f'Sorry, you lost. The word was {word}')
-            return tries, win
+            # If streak is set to False, will clear streak column in database
+            streak = False
+            return tries, win, streak
 
         # While loop for Input
         while True:
@@ -87,4 +90,4 @@ def wordle():
         print('Tries: ' + str(tries))
     
     print(f'You\'ve correctly guessed the word {word}. It took {tries} tries.')
-    return tries, win
+    return tries, win, streak
