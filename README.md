@@ -1,4 +1,5 @@
 # Wordle
+ A Wordle imitation using Python and PostgreSQL via Psycopg.
  Guess the word in 6 tries. Start running wordle_database.py to begin.
  
  This code makes use of ANSI escape code via Unix terminal to color code both a guess and keyboard output.
