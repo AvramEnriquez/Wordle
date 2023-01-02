@@ -20,7 +20,6 @@ try:
         host=DB_HOST,
         port=DB_PORT)
     print("\nDatabase connected successfully!")
-    valid_database = True
 except:
     print("Database failed to connect.")
 
