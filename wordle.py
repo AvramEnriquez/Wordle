@@ -19,8 +19,8 @@ def random_word(word_list):
 
 def wordle():
     """Actual Wordle game"""
-    # word = random_word(words)
-    word = "VEGAN" # <-- Test word
+    word = random_word(words)
+    # word = "VEGAN" # <-- Test word
     alphabet = set("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
     tries = 0
     keyboard = "QWERTYUIOP\n ASDFGHJKL\n  ZXCVBNM"
