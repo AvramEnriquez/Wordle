@@ -53,9 +53,9 @@ def play():
             streak
         )
         VALUES (
-            {tries}, 
-            {win},
-            {streak}
+            '{tries}', 
+            '{win}',
+            '{streak}'
         );
         """)
 
@@ -145,7 +145,7 @@ def stats():
     plt.show()
 
 def clear_stats():
-    confirm = input('Enter Y to confirm. Enter N to go back: ').upper()
+    confirm = input('Enter Y to confirm. Enter anything else to go back: ').upper()
     if confirm == 'Y':
         cur.execute("""
             DELETE
